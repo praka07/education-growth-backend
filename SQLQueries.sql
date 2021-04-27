@@ -62,6 +62,7 @@ subjectCode varchar(5),
 subjectName varchar(100),
 subjectType varchar(10),
 semester int,
+active bit default(1),
 credit decimal(18,2),
 createdBy int,
 createdDate smalldatetime default(getdate())
