@@ -65,7 +65,8 @@ semester int,
 active bit default(1),
 credit decimal(18,2),
 createdBy int,
-createdDate smalldatetime default(getdate())
+createdDate smalldatetime default(getdate()),
+batch int
 )
 
 Create table subjectMapping(
@@ -95,3 +96,31 @@ createdDate smalldatetime default(getdate()),
 foreign key(studentId) references users(autoId),
 foreign key(subjectId) references subject(subjectId)
 )
+--------------------------------------
+Create Proc getSubjectsListbyStudent
+@autoId int,
+@semester int,
+@createdBy int
+as
+begin
+set nocount on
+	
+	if not exists(select '' from markDetails where semester = @semester and studentId = @autoId) begin
+		insert into markDetails(studentId,semester,subjectId,internalMarks,externalMarks,
+		totalMarks,creditPoints,createdBy,createdDate)
+		select u.autoId, a.semester, a.subjectId, 0, 0, 0, 0, @createdBy, GETDATE()
+		from subject as a
+		inner join users as u on u.batch = a.batch
+		where a.semester = @semester and u.autoId = @autoId 
+	end
+	
+	select b.autoId,a.semester, a.subjectId, a.subjectCode, a.subjectType, credit, 
+	case when a.subjectType in (2,3) then a.subjectName + '-' + electiveName else a.subjectName end as subjectName
+	from markDetails as b
+	inner join subject as a on a.subjectId = b.subjectId
+	left join subjectMapping as d on d.subjectId = b.subjectId and d.semester = b.semester
+	left join elective as c on c.electiveId = d.electiveId
+	where b.semester = @semester and b.studentId = @autoId
+	
+set nocount off
+end

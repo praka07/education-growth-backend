@@ -10,5 +10,6 @@ import lombok.ToString;
 public class BatchDetail {
 	private int batchId;
 	private String academicYear;
+	private int numberOfStudent;
 
 }

@@ -73,12 +73,25 @@ public class EducationGrowthRestController {
     public ResponseEntity<?> createNewSubject(@RequestBody SubjectDetail reqSubjectDetail){
         return serviceObj.createNewSubject(reqSubjectDetail);
     }
-    @GetMapping("listsubject")
+    @GetMapping("/listsubject")
     public List<SubjectDetail> getSubjects(){
         return serviceObj.getSubjects();
     }
-    @PutMapping("editsubject")
+    @PutMapping("/editsubject")
     public ResponseEntity<?> editSubject(@RequestBody SubjectDetail reqSubjectDetail){
         return serviceObj.editSubject(reqSubjectDetail);
     }
+    @GetMapping("/eletive/{electiveType}")
+    public List<ElectiveDetail> geteletiveByType(@PathVariable String electiveType){
+        return serviceObj.geteletiveByType(electiveType);
+    }
+    @PostMapping("/subjectmapping")
+    public ResponseEntity<?> subjectMapping(@RequestBody String payload){
+        return serviceObj.subjectMapping(payload);
+    }
+    @GetMapping("/getsubject/{semester}")
+    public List<SubjectDetail> getSubjectDetailsBySemester(@PathVariable int semester){
+        return serviceObj.getSubjectDetailsBySemester(semester);
+    }
+
 }

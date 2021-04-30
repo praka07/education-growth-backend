@@ -33,4 +33,10 @@ public interface EducationGrowth {
     List<SubjectDetail> getSubjects();
 
 	ResponseEntity<?> editSubject(SubjectDetail reqSubjectDetail);
+
+	List<ElectiveDetail> geteletiveByType(String electiveType);
+
+	ResponseEntity<?> subjectMapping(String payload);
+
+	List<SubjectDetail> getSubjectDetailsBySemester(int semester);
 }

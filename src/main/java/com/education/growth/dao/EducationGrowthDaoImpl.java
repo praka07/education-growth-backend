@@ -154,7 +154,7 @@ public class EducationGrowthDaoImpl implements EducationGrowthDao {
     @Override
     public List<BatchDetail> getBatches() {
         List<BatchDetail> details = new ArrayList<BatchDetail>();
-        String selectQuery = "select batchId, cast(fromDate as varchar) + ' - ' + cast(toDate as varchar) as academicYear from batch";
+        String selectQuery = "select batchId, cast(fromDate as varchar) + ' - ' + cast(toDate as varchar) as academicYear, (select count(*) from users where batch = a.batchId) as numberOfStudent from batch as a";
         try {
             details = jdbcTemplate.query(selectQuery, new BeanPropertyRowMapper(BatchDetail.class));
             return details;
@@ -200,14 +200,16 @@ public class EducationGrowthDaoImpl implements EducationGrowthDao {
     @Override
     public ResponseEntity<?> createNewSubject(SubjectDetail reqSubjectDetail) {
         String query = "insert into subject(subjectCode,subjectName,subjectType,semester," +
-                "credit,createdBy) values (:subjectCode,:subjectName,:subjectType,:semester," +
-                ":credit,:createdBy) ";
+                "credit,createdBy,batch) values (:subjectCode,:subjectName,:subjectType,:semester," +
+                ":credit,:createdBy,:batch) ";
         Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("subjectCode", reqSubjectDetail.getSubjectCode());
         parameters.put("subjectName", reqSubjectDetail.getSubjectName());
         parameters.put("subjectType", reqSubjectDetail.getSubjectType());
         parameters.put("semester", reqSubjectDetail.getSemester());
         parameters.put("credit", reqSubjectDetail.getCredit());
+        parameters.put("createdBy", reqSubjectDetail.getCreatedBy());
+        parameters.put("batch",reqSubjectDetail.getBatch());
         log.info(" create new subject query ::: {}", query);
         parameters.put("createdBy", reqSubjectDetail.getCreatedBy());
 
@@ -249,6 +251,53 @@ public class EducationGrowthDaoImpl implements EducationGrowthDao {
             log.info("update Subject {}", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 
+        }
+    }
+
+    @Override
+    public List<ElectiveDetail> geteletiveByType(String electiveType) {
+
+        List<ElectiveDetail> details = new ArrayList<ElectiveDetail>();
+        String selectQuery = "select * from elective where electiveType='"+electiveType+"'";
+        try {
+            details = jdbcTemplate.query(selectQuery, new BeanPropertyRowMapper(ElectiveDetail.class));
+            return details;
+        } catch (Exception e) {
+            log.info("geteletiveByType error {}", e);
+            return details;
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> subjectMapping(String payload) {
+
+        log.info(" subjectMapping {}", payload);
+        JSONObject object = new JSONObject(payload);
+        try {
+            int status = jdbcTemplate.update(
+                    "insert into subjectMapping (studentId,semester,subjectId,electiveId,createdBy) values" +
+                            "(?,?,?,?,?)",object.getInt("studentId"),object.getInt("semester"),
+                    object.getString("subjectId"),object.getString("electiveId"), object.getInt("createdBy"));
+            log.info("updated status {}", status);
+            return ResponseEntity.status(HttpStatus.OK).body("{ \"message\" : \"mapped successfully\"}");
+
+        } catch (Exception e) {
+            log.info("subjectMapping {}", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+
+    }
+    }
+
+    @Override
+    public List<SubjectDetail> getSubjectDetailsBySemester(int semester) {
+        List<SubjectDetail> subjectDetails = new ArrayList<SubjectDetail>();
+        String selectQuery = "select * from subject where semester ="+ semester +" and subjectType in (2,3)";
+        try {
+            subjectDetails = jdbcTemplate.query(selectQuery, new BeanPropertyRowMapper(SubjectDetail.class));
+            return subjectDetails;
+        } catch (Exception e) {
+            log.info("getSubjects error {}", e);
+            return subjectDetails;
         }
     }
 

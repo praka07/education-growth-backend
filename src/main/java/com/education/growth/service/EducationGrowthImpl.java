@@ -75,4 +75,19 @@ public class EducationGrowthImpl implements EducationGrowth {
         return daoObject.editSubject(reqSubjectDetail);
     }
 
+    @Override
+    public List<ElectiveDetail> geteletiveByType(String electiveType) {
+        return daoObject.geteletiveByType(electiveType);
+    }
+
+    @Override
+    public ResponseEntity<?> subjectMapping(String payload) {
+        return daoObject.subjectMapping(payload);
+    }
+
+    @Override
+    public List<SubjectDetail> getSubjectDetailsBySemester(int semester) {
+        return daoObject.getSubjectDetailsBySemester(semester);
+    }
+
 }

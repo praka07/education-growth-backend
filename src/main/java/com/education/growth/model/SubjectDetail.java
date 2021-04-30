@@ -16,5 +16,6 @@ public class SubjectDetail {
     private float credit;
     private int createdBy;
     private boolean active;
+    private int batch;
 
 }
