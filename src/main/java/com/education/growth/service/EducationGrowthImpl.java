@@ -90,4 +90,9 @@ public class EducationGrowthImpl implements EducationGrowth {
         return daoObject.getSubjectDetailsBySemester(semester);
     }
 
+    @Override
+    public ResponseEntity<?> getSubjectsListbyStudent(String requset) {
+        return daoObject.getSubjectsListbyStudent(requset);
+    }
+
 }

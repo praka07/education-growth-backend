@@ -40,4 +40,6 @@ public interface EducationGrowthDao {
 	ResponseEntity<?> subjectMapping(String payload);
 
 	List<SubjectDetail> getSubjectDetailsBySemester(int semester);
+
+    ResponseEntity<?> getSubjectsListbyStudent(String requset);
 }

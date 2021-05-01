@@ -39,4 +39,6 @@ public interface EducationGrowth {
 	ResponseEntity<?> subjectMapping(String payload);
 
 	List<SubjectDetail> getSubjectDetailsBySemester(int semester);
+
+    ResponseEntity<?> getSubjectsListbyStudent(String requset);
 }

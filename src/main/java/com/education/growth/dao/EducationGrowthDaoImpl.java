@@ -209,7 +209,7 @@ public class EducationGrowthDaoImpl implements EducationGrowthDao {
         parameters.put("semester", reqSubjectDetail.getSemester());
         parameters.put("credit", reqSubjectDetail.getCredit());
         parameters.put("createdBy", reqSubjectDetail.getCreatedBy());
-        parameters.put("batch",reqSubjectDetail.getBatch());
+        parameters.put("batch", reqSubjectDetail.getBatch());
         log.info(" create new subject query ::: {}", query);
         parameters.put("createdBy", reqSubjectDetail.getCreatedBy());
 
@@ -243,7 +243,7 @@ public class EducationGrowthDaoImpl implements EducationGrowthDao {
         log.info("Update subject Detail {}", reqSubjectDetail);
         try {
             int status = jdbcTemplate.update(
-                    "update subject set active =?",reqSubjectDetail.isActive());
+                    "update subject set active =?", reqSubjectDetail.isActive());
             log.info("updated status {}", status);
             return ResponseEntity.status(HttpStatus.OK).body("{ \"message\" : \"updated successfully\"}");
 
@@ -258,7 +258,7 @@ public class EducationGrowthDaoImpl implements EducationGrowthDao {
     public List<ElectiveDetail> geteletiveByType(String electiveType) {
 
         List<ElectiveDetail> details = new ArrayList<ElectiveDetail>();
-        String selectQuery = "select * from elective where electiveType='"+electiveType+"'";
+        String selectQuery = "select * from elective where electiveType='" + electiveType + "'";
         try {
             details = jdbcTemplate.query(selectQuery, new BeanPropertyRowMapper(ElectiveDetail.class));
             return details;
@@ -276,8 +276,8 @@ public class EducationGrowthDaoImpl implements EducationGrowthDao {
         try {
             int status = jdbcTemplate.update(
                     "insert into subjectMapping (studentId,semester,subjectId,electiveId,createdBy) values" +
-                            "(?,?,?,?,?)",object.getInt("studentId"),object.getInt("semester"),
-                    object.getString("subjectId"),object.getString("electiveId"), object.getInt("createdBy"));
+                            "(?,?,?,?,?)", object.getInt("studentId"), object.getInt("semester"),
+                    object.getString("subjectId"), object.getString("electiveId"), object.getInt("createdBy"));
             log.info("updated status {}", status);
             return ResponseEntity.status(HttpStatus.OK).body("{ \"message\" : \"mapped successfully\"}");
 
@@ -285,19 +285,39 @@ public class EducationGrowthDaoImpl implements EducationGrowthDao {
             log.info("subjectMapping {}", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 
-    }
+        }
     }
 
     @Override
     public List<SubjectDetail> getSubjectDetailsBySemester(int semester) {
         List<SubjectDetail> subjectDetails = new ArrayList<SubjectDetail>();
-        String selectQuery = "select * from subject where semester ="+ semester +" and subjectType in (2,3)";
+        String selectQuery = "select * from subject where semester =" + semester + " and subjectType in (2,3)";
         try {
             subjectDetails = jdbcTemplate.query(selectQuery, new BeanPropertyRowMapper(SubjectDetail.class));
             return subjectDetails;
         } catch (Exception e) {
             log.info("getSubjects error {}", e);
             return subjectDetails;
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> getSubjectsListbyStudent(String requset) {
+        JSONObject jsonRequest = new JSONObject(requset);
+        log.info(" Request >--> {}", jsonRequest);
+        try {
+
+            SimpleJdbcCall jdbcCall = new
+                    SimpleJdbcCall(dataSource).withProcedureName("getSubjectsListbyStudent");
+            SqlParameterSource in = new MapSqlParameterSource().addValue("autoId", jsonRequest.getInt("autoId")).addValue("semester",jsonRequest.getInt("semester"))
+                    .addValue("createdBy",jsonRequest.getInt("createdBy"));
+            Map<String, Object> out = jdbcCall.execute(in);
+            log.info("response from store procedure  :::{}", out);
+            return ResponseEntity.ok().body(out);
+
+        } catch (Exception e) {
+            log.info("getSubjectsListbyStudent {}", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 

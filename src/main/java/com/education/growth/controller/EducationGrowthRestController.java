@@ -94,4 +94,9 @@ public class EducationGrowthRestController {
         return serviceObj.getSubjectDetailsBySemester(semester);
     }
 
+    @PostMapping("/subjectslistbystudent")
+    public ResponseEntity<?> getSubjectsListbyStudent(@RequestBody String requset){
+        return serviceObj.getSubjectsListbyStudent(requset);
+    }
+
 }
