@@ -2,15 +2,12 @@ package com.education.growth.service;
 
 import java.util.List;
 
-import com.education.growth.model.SubjectDetail;
+import com.education.growth.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.education.growth.dao.EducationGrowthDaoImpl;
-import com.education.growth.model.BatchDetail;
-import com.education.growth.model.ElectiveDetail;
-import com.education.growth.model.User;
 
 @Service
 public class EducationGrowthImpl implements EducationGrowth {
@@ -93,6 +90,11 @@ public class EducationGrowthImpl implements EducationGrowth {
     @Override
     public ResponseEntity<?> getSubjectsListbyStudent(String requset) {
         return daoObject.getSubjectsListbyStudent(requset);
+    }
+
+    @Override
+    public ResponseEntity<?> markEntry(List<MarkEntry> markEntries) {
+        return daoObject.markEntry(markEntries);
     }
 
 }

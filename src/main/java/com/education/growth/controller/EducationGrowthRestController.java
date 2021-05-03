@@ -2,7 +2,7 @@ package com.education.growth.controller;
 
 import java.util.List;
 
-import com.education.growth.model.SubjectDetail;
+import com.education.growth.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -13,9 +13,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.education.growth.model.BatchDetail;
-import com.education.growth.model.ElectiveDetail;
-import com.education.growth.model.User;
 import com.education.growth.service.EducationGrowthImpl;
 
 @RestController
@@ -69,34 +66,45 @@ public class EducationGrowthRestController {
     public ResponseEntity<?> createElectiveSubject(@RequestBody String payload) {
         return serviceObj.createElectiveSubject(payload);
     }
+
     @PostMapping("/createsubject")
-    public ResponseEntity<?> createNewSubject(@RequestBody SubjectDetail reqSubjectDetail){
+    public ResponseEntity<?> createNewSubject(@RequestBody SubjectDetail reqSubjectDetail) {
         return serviceObj.createNewSubject(reqSubjectDetail);
     }
+
     @GetMapping("/listsubject")
-    public List<SubjectDetail> getSubjects(){
+    public List<SubjectDetail> getSubjects() {
         return serviceObj.getSubjects();
     }
+
     @PutMapping("/editsubject")
-    public ResponseEntity<?> editSubject(@RequestBody SubjectDetail reqSubjectDetail){
+    public ResponseEntity<?> editSubject(@RequestBody SubjectDetail reqSubjectDetail) {
         return serviceObj.editSubject(reqSubjectDetail);
     }
+
     @GetMapping("/eletive/{electiveType}")
-    public List<ElectiveDetail> geteletiveByType(@PathVariable String electiveType){
+    public List<ElectiveDetail> geteletiveByType(@PathVariable String electiveType) {
         return serviceObj.geteletiveByType(electiveType);
     }
+
     @PostMapping("/subjectmapping")
-    public ResponseEntity<?> subjectMapping(@RequestBody String payload){
+    public ResponseEntity<?> subjectMapping(@RequestBody String payload) {
         return serviceObj.subjectMapping(payload);
     }
+
     @GetMapping("/getsubject/{semester}")
-    public List<SubjectDetail> getSubjectDetailsBySemester(@PathVariable int semester){
+    public List<SubjectDetail> getSubjectDetailsBySemester(@PathVariable int semester) {
         return serviceObj.getSubjectDetailsBySemester(semester);
     }
 
     @PostMapping("/subjectslistbystudent")
-    public ResponseEntity<?> getSubjectsListbyStudent(@RequestBody String requset){
+    public ResponseEntity<?> getSubjectsListbyStudent(@RequestBody String requset) {
         return serviceObj.getSubjectsListbyStudent(requset);
     }
 
+    @PostMapping("/markentry")
+    public ResponseEntity<?> markEntry(@RequestBody List<MarkEntry> markEntries) {
+        return serviceObj.markEntry(markEntries);
+
+    }
 }

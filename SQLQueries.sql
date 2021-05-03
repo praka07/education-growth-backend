@@ -97,7 +97,7 @@ foreign key(studentId) references users(autoId),
 foreign key(subjectId) references subject(subjectId)
 )
 --------------------------------------
-Create Proc getSubjectsListbyStudent
+alter Procedure getSubjectsListbyStudent
 @autoId int,
 @semester int,
 @createdBy int
@@ -115,12 +115,37 @@ set nocount on
 	end
 	
 	select b.autoId,a.semester, a.subjectId, a.subjectCode, a.subjectType, credit, 
-	case when a.subjectType in (2,3) then a.subjectName + '-' + electiveName else a.subjectName end as subjectName
+	case when a.subjectType in (2,3) then a.subjectName + '-' + electiveName else a.subjectName end as subjectName, @createdBy as createdBy,internalMarks,externalMarks,
+		totalMarks, cast(fromDate as varchar) + ' - ' + cast(toDate as varchar) as academicYear
 	from markDetails as b
 	inner join subject as a on a.subjectId = b.subjectId
+	inner join batch as ba on ba.batchId = a.batch
 	left join subjectMapping as d on d.subjectId = b.subjectId and d.semester = b.semester
 	left join elective as c on c.electiveId = d.electiveId
 	where b.semester = @semester and b.studentId = @autoId
 	
 set nocount off
+end
+
+
+CREATE TYPE markDetailsType AS TABLE (
+autoId int,
+studentId	int,
+semester	int,
+subjectId	int,
+internalMarks	int,
+externalMarks	int,
+totalMarks	int,
+creditPoints	decimal(18,2),
+createdBy	int)
+
+CREATE PROCEDURE markDetailsUpdate
+@ObjType markDetailsType READONLY
+AS
+Begin
+Set NoCount On
+	update markDetails set internalMarks = a.internalMarks, externalMarks= a.externalMarks,
+	totalMarks=a.totalMarks,creditPoints=a.creditPoints,createdBy=a.createdBy,
+	createdDate = getdate() FROM @ObjType as a where markDetails.autoId = a.autoId
+Set NoCount Off
 end

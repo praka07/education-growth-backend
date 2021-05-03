@@ -2,12 +2,8 @@ package com.education.growth.service;
 
 import java.util.List;
 
-import com.education.growth.model.SubjectDetail;
+import com.education.growth.model.*;
 import org.springframework.http.ResponseEntity;
-
-import com.education.growth.model.BatchDetail;
-import com.education.growth.model.ElectiveDetail;
-import com.education.growth.model.User;
 
 public interface EducationGrowth {
 
@@ -41,4 +37,6 @@ public interface EducationGrowth {
 	List<SubjectDetail> getSubjectDetailsBySemester(int semester);
 
     ResponseEntity<?> getSubjectsListbyStudent(String requset);
+
+	ResponseEntity<?> markEntry(List<MarkEntry> markEntries);
 }
