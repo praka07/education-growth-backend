@@ -97,7 +97,7 @@ foreign key(studentId) references users(autoId),
 foreign key(subjectId) references subject(subjectId)
 )
 --------------------------------------
-alter Procedure getSubjectsListbyStudent
+Create Procedure getSubjectsListbyStudent
 @autoId int,
 @semester int,
 @createdBy int
@@ -115,17 +115,25 @@ set nocount on
 	end
 	
 	select b.autoId,a.semester, a.subjectId, a.subjectCode, a.subjectType, credit, 
-	case when a.subjectType in (2,3) then a.subjectName + '-' + electiveName else a.subjectName end as subjectName, @createdBy as createdBy,internalMarks,externalMarks,
+	--case when a.subjectType in (2,3) then a.subjectName + '-' + electiveName else a.subjectName end as subjectName, 
+	case when a.subjectType in (2,3) then a.subjectName + '-' + 
+	(select electiveName from elective as el
+	inner join subjectMapping as d on d.subjectId = b.subjectId and d.semester = b.semester and d.studentId = b.studentId
+	where el.electiveId = d.electiveId)
+	else a.subjectName end as subjectName,
+	@createdBy as createdBy,internalMarks,externalMarks,
 		totalMarks, cast(fromDate as varchar) + ' - ' + cast(toDate as varchar) as academicYear
 	from markDetails as b
 	inner join subject as a on a.subjectId = b.subjectId
 	inner join batch as ba on ba.batchId = a.batch
-	left join subjectMapping as d on d.subjectId = b.subjectId and d.semester = b.semester
-	left join elective as c on c.electiveId = d.electiveId
+	--left join subjectMapping as d on d.subjectId = b.subjectId and d.semester = b.semester
+	--left join elective as c on c.electiveId = d.electiveId
 	where b.semester = @semester and b.studentId = @autoId
 	
 set nocount off
 end
+
+
 
 
 CREATE TYPE markDetailsType AS TABLE (

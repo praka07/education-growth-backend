@@ -17,5 +17,6 @@ public class SubjectDetail {
     private int createdBy;
     private boolean active;
     private int batch;
+    private String academicYear;
 
 }

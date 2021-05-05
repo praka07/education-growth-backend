@@ -229,7 +229,7 @@ public class EducationGrowthDaoImpl implements EducationGrowthDao {
 	public List<SubjectDetail> getSubjects() {
 
 		List<SubjectDetail> subjectDetails = new ArrayList<SubjectDetail>();
-		String selectQuery = "select * from subject";
+		String selectQuery = "select *,(select cast(fromDate as varchar) + ' - ' + cast(toDate as varchar) from batch where batchid=sub.batch) as academicYear from subject as sub";
 		try {
 			subjectDetails = jdbcTemplate.query(selectQuery, new BeanPropertyRowMapper(SubjectDetail.class));
 			return subjectDetails;
